@@ -20,6 +20,7 @@ let todoArray = [
     }
 ];
 
+// delete todo function
 const deleteTodo = (id) =>  {
     todoArray = [...todoArray].filter(todo => todo.id !== id)
     console.log(todoArray)
@@ -32,6 +33,7 @@ const deleteTodo = (id) =>  {
     )
 }
 
+// edit todo function
 const editTodo = (el, id, todoItemCard) => {
     todoArray = [...todoArray].map(todo => todo.id === id ? {...todo, name: todoItemCard.value} :  {...todo})
     if(el.innerText.toLowerCase() === "edit") {
@@ -45,16 +47,24 @@ const editTodo = (el, id, todoItemCard) => {
     }
 }
 
-const createNewTodoItem = (todo) => {
+
+// creating todo div
+const createTodoDiv = (todo) => {
+
+    // created main todo div
     const todoCard = document.createElement("LI");
     todoCard.classList.add("todo-item")
+    todoCard.dataset.id = todo.id; // set id as dataset for identifying todo Div 
 
+    // input box for todo value
     const todoItemCard = document.createElement("INPUT");
     todoItemCard.type = "text"
-    todoItemCard.setAttribute("readonly", "readonly")
+    
+    todoItemCard.setAttribute("readonly", "readonly") // added readonly attribute in input box so user cannot change todo vaue without clicking edit button
     todoItemCard.value = todo.name;
-    todoCard.dataset.id = todo.id;
+    
 
+    // created delete todo button element
     const crossBtn = document.createElement("BUTTON");
     crossBtn.classList.add("delete-todo-btn");
     crossBtn.innerText = "Delete"
@@ -62,12 +72,14 @@ const createNewTodoItem = (todo) => {
         deleteTodo(todo.id)
     })
 
+    // created edit todo button element
     const editTodoBtn = document.createElement("BUTTON");
     editTodoBtn.innerText = "Edit"
     editTodoBtn.addEventListener("click", (event) => {
         editTodo(event.target, todo.id, todoItemCard);
     })
 
+    // appended todo value, edit button, delete button as child in todoCard
     todoCard.appendChild(todoItemCard)
     todoCard.appendChild(editTodoBtn)
     todoCard.appendChild(crossBtn)
@@ -75,17 +87,20 @@ const createNewTodoItem = (todo) => {
     return todoCard
 }
 
+// for initial rendering of todo list
 todoArray.forEach((item) => {
-    const todoItem =  createNewTodoItem(item)
+    const todoItem =  createTodoDiv(item)
     todoList.appendChild(todoItem);
 })
 
+// calling on clicking add todo button
 const renderTodo = (todo) => {
-    const todoItem = createNewTodoItem(todo)
+    const todoItem = createTodoDiv(todo)
     todoList.appendChild(todoItem);
 };
 
  
+// add todo button onclick
 addTodoBtn.addEventListener("click", () => {
     let updatedItem = {id: 4, name: newTodo}
     todoArray = [...todoArray, updatedItem]
