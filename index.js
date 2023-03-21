@@ -2,8 +2,12 @@ const inputBox = document.getElementById("todo-input");
 const todoList = document.getElementById("todo-list");
 const addTodoBtn = document.getElementById("add-todo-btn");
 
-
 let newTodo; 
+
+inputBox.addEventListener("input", (e) => {
+    newTodo = e.target.value
+});
+
 
 let todoArray = [
     {
@@ -28,33 +32,53 @@ const deleteTodo = (id) =>  {
     )
 }
 
+const editTodo = (el, id, todoItemCard) => {
+    todoArray = [...todoArray].map(todo => todo.id === id ? {...todo, name: todoItemCard.value} :  {...todo})
+    if(el.innerText.toLowerCase() === "edit") {
+        todoItemCard.removeAttribute("readonly");
+        todoItemCard.focus();
+        el.innerText = "Save";
+    } else {
+        el.innerText = "Edit";
+        todoItemCard.setAttribute("readonly", "readonly")
+        
+    }
+}
+
 const createNewTodoItem = (todo) => {
-    const todoItemCard = document.createElement("LI");
-    todoItemCard.classList.add("todo-item")
-    todoItemCard.dataset.id = todo.id
+    const todoCard = document.createElement("LI");
+    todoCard.classList.add("todo-item")
+
+    const todoItemCard = document.createElement("INPUT");
+    todoItemCard.type = "text"
+    todoItemCard.setAttribute("readonly", "readonly")
+    todoItemCard.value = todo.name;
+    todoCard.dataset.id = todo.id;
+
     const crossBtn = document.createElement("BUTTON");
     crossBtn.classList.add("delete-todo-btn");
     crossBtn.innerText = "Delete"
-    crossBtn.onclick = () => {
+    crossBtn.addEventListener("click", () => {
         deleteTodo(todo.id)
-    }
-    todoItemCard.innerHTML = todo.name;
-    todoItemCard.appendChild(crossBtn)
+    })
 
-    return todoItemCard
+    const editTodoBtn = document.createElement("BUTTON");
+    editTodoBtn.innerText = "Edit"
+    editTodoBtn.addEventListener("click", (event) => {
+        editTodo(event.target, todo.id, todoItemCard);
+    })
+
+    todoCard.appendChild(todoItemCard)
+    todoCard.appendChild(editTodoBtn)
+    todoCard.appendChild(crossBtn)
+
+    return todoCard
 }
 
 todoArray.forEach((item) => {
     const todoItem =  createNewTodoItem(item)
-
     todoList.appendChild(todoItem);
 })
-
-
-
-inputBox.addEventListener("input", (e) => {
-    newTodo = e.target.value
-});
 
 const renderTodo = (todo) => {
     const todoItem = createNewTodoItem(todo)
@@ -64,7 +88,7 @@ const renderTodo = (todo) => {
  
 addTodoBtn.addEventListener("click", () => {
     let updatedItem = {id: 4, name: newTodo}
-    todoArray.push(updatedItem);
+    todoArray = [...todoArray, updatedItem]
     renderTodo(updatedItem)
 });
 
