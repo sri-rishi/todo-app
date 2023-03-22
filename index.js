@@ -4,6 +4,7 @@ const addTodoBtn = document.getElementById("add-todo-btn");
 
 let newTodo; 
 
+// reading new todo value 
 inputBox.addEventListener("input", (e) => {
     newTodo = e.target.value
 });
@@ -12,11 +13,13 @@ inputBox.addEventListener("input", (e) => {
 let todoArray = [
     {
         id: 1,
-        name: "work on project"
+        name: "work on project",
+        isCompleted: false
     },
     {
         id: 2,
-        name: "go on walk"
+        name: "go on walk",
+        isCompleted: false
     }
 ];
 
@@ -40,11 +43,24 @@ const editTodo = (el, id, todoItemCard) => {
         todoItemCard.removeAttribute("readonly");
         todoItemCard.focus();
         el.innerText = "Save";
+        todoItemCard.style.textDecoration = "none"
     } else {
         el.innerText = "Edit";
-        todoItemCard.setAttribute("readonly", "readonly")
-        
+        todoItemCard.setAttribute("readonly",  "readonly")
     }
+}
+
+const checkTodo = (el, id, todoItemCard) => {
+    todoArray = [...todoArray].map(todo => todo.id === id ? {...todo, isCompleted: !todo.isCompleted} : {...todo});
+    console.log(todoArray)
+
+    if(el.checked) {
+        todoItemCard.style.textDecoration = "line-through"
+    }else {
+        todoItemCard.style.textDecoration = "none"
+    }
+
+    console.log(el.parentNode)
 }
 
 
@@ -56,12 +72,20 @@ const createTodoDiv = (todo) => {
     todoCard.classList.add("todo-item")
     todoCard.dataset.id = todo.id; // set id as dataset for identifying todo Div 
 
+
     // input box for todo value
     const todoItemCard = document.createElement("INPUT");
     todoItemCard.type = "text"
     
     todoItemCard.setAttribute("readonly", "readonly") // added readonly attribute in input box so user cannot change todo vaue without clicking edit button
     todoItemCard.value = todo.name;
+
+    const checkBox = document.createElement("INPUT")
+    checkBox.type = "checkbox";
+    checkBox.checked = todo.isCompleted || false
+    checkBox.addEventListener("click", (event) => {
+        checkTodo(event.target, todo.id, todoItemCard)
+    })
     
 
     // created delete todo button element
@@ -74,12 +98,16 @@ const createTodoDiv = (todo) => {
 
     // created edit todo button element
     const editTodoBtn = document.createElement("BUTTON");
+    editTodoBtn.disabled = todo.isCompleted? true : false
+
     editTodoBtn.innerText = "Edit"
     editTodoBtn.addEventListener("click", (event) => {
         editTodo(event.target, todo.id, todoItemCard);
-    })
+    });
+
 
     // appended todo value, edit button, delete button as child in todoCard
+    todoCard.appendChild(checkBox)
     todoCard.appendChild(todoItemCard)
     todoCard.appendChild(editTodoBtn)
     todoCard.appendChild(crossBtn)
@@ -93,16 +121,17 @@ todoArray.forEach((item) => {
     todoList.appendChild(todoItem);
 })
 
-// calling on clicking add todo button
+// rendering todo item on clicking add todo button
 const renderTodo = (todo) => {
     const todoItem = createTodoDiv(todo)
     todoList.appendChild(todoItem);
+    console.log(todoArray)
 };
 
  
 // add todo button onclick
 addTodoBtn.addEventListener("click", () => {
-    let updatedItem = {id: 4, name: newTodo}
+    let updatedItem = {id: 4, name: newTodo, isCompleted: false}
     todoArray = [...todoArray, updatedItem]
     renderTodo(updatedItem)
 });
