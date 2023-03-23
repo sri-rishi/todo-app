@@ -50,14 +50,17 @@ const editTodo = (el, id, todoItemCard) => {
     }
 }
 
-const checkTodo = (el, id, todoItemCard) => {
+// complete todo function
+const completeTodo = (el, id, todoItemCard, editTodoBtn) => {
     todoArray = [...todoArray].map(todo => todo.id === id ? {...todo, isCompleted: !todo.isCompleted} : {...todo});
     console.log(todoArray)
 
     if(el.checked) {
-        todoItemCard.style.textDecoration = "line-through"
+        todoItemCard.style.textDecoration = "line-through";
+        editTodoBtn.disabled = true
     }else {
         todoItemCard.style.textDecoration = "none"
+        editTodoBtn.disabled = false
     }
 
     console.log(el.parentNode)
@@ -80,22 +83,6 @@ const createTodoDiv = (todo) => {
     todoItemCard.setAttribute("readonly", "readonly") // added readonly attribute in input box so user cannot change todo vaue without clicking edit button
     todoItemCard.value = todo.name;
 
-    const checkBox = document.createElement("INPUT")
-    checkBox.type = "checkbox";
-    checkBox.checked = todo.isCompleted || false
-    checkBox.addEventListener("click", (event) => {
-        checkTodo(event.target, todo.id, todoItemCard)
-    })
-    
-
-    // created delete todo button element
-    const crossBtn = document.createElement("BUTTON");
-    crossBtn.classList.add("delete-todo-btn");
-    crossBtn.innerText = "Delete"
-    crossBtn.addEventListener("click", () => {
-        deleteTodo(todo.id)
-    })
-
     // created edit todo button element
     const editTodoBtn = document.createElement("BUTTON");
     editTodoBtn.disabled = todo.isCompleted? true : false
@@ -104,6 +91,21 @@ const createTodoDiv = (todo) => {
     editTodoBtn.addEventListener("click", (event) => {
         editTodo(event.target, todo.id, todoItemCard);
     });
+
+    const checkBox = document.createElement("INPUT")
+    checkBox.type = "checkbox";
+    checkBox.checked = todo.isCompleted || false
+    checkBox.addEventListener("click", (event) => {
+        completeTodo(event.target, todo.id, todoItemCard, editTodoBtn)
+    })
+
+    // created delete todo button element
+    const crossBtn = document.createElement("BUTTON");
+    crossBtn.classList.add("delete-todo-btn");
+    crossBtn.innerText = "Delete"
+    crossBtn.addEventListener("click", () => {
+        deleteTodo(todo.id)
+    })
 
 
     // appended todo value, edit button, delete button as child in todoCard
