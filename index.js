@@ -12,25 +12,26 @@ inputBox.addEventListener("input", (e) => {
 
 let todoArray = [
     {
-        id: 1,
+        id: self.crypto.randomUUID(),
         name: "work on project",
         isCompleted: false
     },
     {
-        id: 2,
+        id: self.crypto.randomUUID(),
         name: "go on walk",
         isCompleted: false
     }
 ];
 
+
 // delete todo function
 const deleteTodo = (id) =>  {
     todoArray = [...todoArray].filter(todo => todo.id !== id)
-    console.log(todoArray)
+
     const todoItemList = document.querySelectorAll(".todo-item");
     todoItemList.forEach((item) => {
-        if(parseInt(item.dataset.id) === id ) {
-            item.style.display = parseInt(item.dataset.id) === id && "none" 
+        if(item.dataset.id === id ) {
+            item.style.display = item.dataset.id === id && "none" 
         }
     }
     )
@@ -53,7 +54,6 @@ const editTodo = (el, id, todoItemCard) => {
 // complete todo function
 const completeTodo = (el, id, todoItemCard, editTodoBtn) => {
     todoArray = [...todoArray].map(todo => todo.id === id ? {...todo, isCompleted: !todo.isCompleted} : {...todo});
-    console.log(todoArray)
 
     if(el.checked) {
         todoItemCard.style.textDecoration = "line-through";
@@ -62,8 +62,6 @@ const completeTodo = (el, id, todoItemCard, editTodoBtn) => {
         todoItemCard.style.textDecoration = "none"
         editTodoBtn.disabled = false
     }
-
-    console.log(el.parentNode)
 }
 
 
@@ -127,13 +125,12 @@ todoArray.forEach((item) => {
 const renderTodo = (todo) => {
     const todoItem = createTodoDiv(todo)
     todoList.appendChild(todoItem);
-    console.log(todoArray)
 };
 
  
 // add todo button onclick
 addTodoBtn.addEventListener("click", () => {
-    let updatedItem = {id: 4, name: newTodo, isCompleted: false}
+    let updatedItem = {id: self.crypto.randomUUID(), name: newTodo, isCompleted: false}
     todoArray = [...todoArray, updatedItem]
     renderTodo(updatedItem)
 });
